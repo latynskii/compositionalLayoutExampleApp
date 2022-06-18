@@ -8,17 +8,18 @@
 import UIKit
 
 class CollectionViewController: UIViewController {
+    
     //MARK: - UIProperties
     private var collectionView: UICollectionView!
-    
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.color = .purple
+        activityIndicator.color = UIColor.getSelectColorCell()
         activityIndicator.startAnimating()
         return activityIndicator
     }()
+    
     //MARK: - Properties
-    private var dataSource: UICollectionViewDiffableDataSource<Section, Itemm>?
+    private var dataSource: UICollectionViewDiffableDataSource<Section, ItemModel>?
     var presener: CollectionViewPresenterProtocol?
     
     //MARK: - Life Cycle
@@ -107,7 +108,7 @@ class CollectionViewController: UIViewController {
     
     //MARK: - Make Data source
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Itemm>(collectionView: collectionView) { (collectionView, indexPath, model) -> UICollectionViewCell in
+        dataSource = UICollectionViewDiffableDataSource<Section, ItemModel>(collectionView: collectionView) { (collectionView, indexPath, model) -> UICollectionViewCell in
             guard let section = Section(rawValue: indexPath.section) else {
                 fatalError("")
             }
@@ -145,7 +146,7 @@ class CollectionViewController: UIViewController {
     }
     
     private func reloadData() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Itemm>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, ItemModel>()
         DispatchQueue.main.async {
             guard let sections = self.presener?.sections?.sections else { return }
             
@@ -168,10 +169,18 @@ class CollectionViewController: UIViewController {
     private func makeConstrains() {
         collectionView.addSubview(activityIndicator)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 75),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 }
