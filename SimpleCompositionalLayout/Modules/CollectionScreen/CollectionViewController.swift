@@ -7,17 +7,27 @@
 
 import UIKit
 
-class CollectionViewController: UIViewController, UICollectionViewDelegate {
-    
-    //MARK: - Properties
+class CollectionViewController: UIViewController {
+    //MARK: - UIProperties
     private var collectionView: UICollectionView!
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.color = .purple
+        activityIndicator.startAnimating()
+        return activityIndicator
+    }()
+    //MARK: - Properties
     private var dataSource: UICollectionViewDiffableDataSource<Section, Itemm>?
     var presener: CollectionViewPresenterProtocol?
     
     //MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        presener?.fetchData(completion: { error in
+        setupCollectionView()
+        setupDataSource()
+        makeConstrains()
+        presener?.fetchData(completion: { [unowned self] error in
             if let error = error {
                 switch error {
                 case .urlError:
@@ -31,17 +41,16 @@ class CollectionViewController: UIViewController, UICollectionViewDelegate {
                 }
             }
             DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
                 self.reloadData()
             }
         })
-        setupCollectionView()
-        setupDataSource()
-        
+
         view.backgroundColor = UIColor(displayP3Red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
         collectionView.backgroundColor = UIColor(displayP3Red: 0.9, green: 0.9, blue: 0.9, alpha: 1)
 
     }
-        
+    
     private func setupCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: makeCompositionalLayout())
         view.addSubview(collectionView)
@@ -62,8 +71,10 @@ class CollectionViewController: UIViewController, UICollectionViewDelegate {
     }
     
     private func makeSection() -> NSCollectionLayoutSection {
-        let estimatedSize = CGSize(width: view.frame.width * 0.45,
-                                   height: view.frame.height * 0.25)
+        let estimatedSize = UIDevice.current.userInterfaceIdiom == .pad
+        ? CGSize(width: view.frame.width * 0.35, height: view.frame.height * 0.35)
+        : CGSize(width: view.frame.width * 0.45, height: view.frame.height * 0.25)
+        
         
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(estimatedSize.width),
                                               heightDimension: .absolute(estimatedSize.height))
@@ -154,6 +165,18 @@ class CollectionViewController: UIViewController, UICollectionViewDelegate {
         return cell
     }
     
+    private func makeConstrains() {
+        collectionView.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+}
+
+extension CollectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
       
     }

@@ -14,7 +14,9 @@ class SectionHeaderView: UICollectionReusableView {
     let title: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = UIDevice.current.userInterfaceIdiom == .pad
+        ? .systemFont(ofSize: 30, weight: .bold)
+        : .systemFont(ofSize: 24, weight: .bold)
         return label
     }()
     

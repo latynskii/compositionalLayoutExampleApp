@@ -14,14 +14,17 @@ class LayoutCell: UICollectionViewCell {
     //MARK: - UI Properties
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleToFill
-        imageView.image = UIImage(named: "Loskov1")
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .gray
         return imageView
     }()
     
     let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.font = UIDevice.current.userInterfaceIdiom == .pad
+        ? .systemFont(ofSize: 20, weight: .bold)
+        : .systemFont(ofSize: 14, weight: .bold)
+        
         label.textAlignment = .left
         label.numberOfLines = 0
         return label
@@ -29,7 +32,7 @@ class LayoutCell: UICollectionViewCell {
     
     private let blurView: UIView = {
         let view = UIView()
-        view.backgroundColor = .clear
+        view.backgroundColor = .white.withAlphaComponent(0.2)
         return view
     }()
         
@@ -48,8 +51,8 @@ class LayoutCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupConstrains()
         setupUI()
+        setupConstrains()
     }
     
     required init?(coder: NSCoder) {
@@ -73,11 +76,11 @@ class LayoutCell: UICollectionViewCell {
         self.layer.cornerRadius = 17
         self.clipsToBounds = true
     }
-    
+
     private func setupConstrains() {
         self.addSubview(imageView)
         self.addSubview(blurView)
-        self.addSubview(titleLabel)
+        self.blurView.addSubview(titleLabel)
         
         blurView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,16 +95,15 @@ class LayoutCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             blurView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor),
-            blurView.heightAnchor.constraint(equalToConstant: self.frame.height * 0.3),
             blurView.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
             blurView.trailingAnchor.constraint(equalTo: imageView.trailingAnchor)
         ])
         
         NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: blurView.centerXAnchor),
-            titleLabel.centerYAnchor.constraint(equalTo: blurView.centerYAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8)
+            titleLabel.topAnchor.constraint(equalTo: blurView.topAnchor, constant: 16),
+            titleLabel.bottomAnchor.constraint(equalTo: blurView.bottomAnchor, constant: -16),
+            titleLabel.leadingAnchor.constraint(equalTo: blurView.leadingAnchor, constant: 8),
+            titleLabel.trailingAnchor.constraint(equalTo: blurView.trailingAnchor, constant: -8)
         ])
     }
 }
